@@ -268,6 +268,7 @@
                 const endDate = new Date(new Date(auction.firstBidTimestamp).getTime() + AUCTION_DURATION_MS);
                 const isExpired = (endDate - new Date()) <= 0;
                 const isDetailsOpen = openDetails.has(playerName);
+                const initialTimeDisplay = formatTimeLeft(endDate - new Date()); // Calcolo il tempo iniziale
 
                 const card = document.createElement('div');
                 card.className = `border border-gray-700 rounded-xl p-4 mb-4 transition-all ${isExpired ? 'bg-gray-700/50 opacity-70' : 'bg-gray-800'}`;
@@ -285,8 +286,14 @@
                 card.innerHTML = `
                     <div class="grid grid-cols-3 gap-4 items-center">
                         <div class="col-span-3 md:col-span-1">
-                            <h3 class="font-bold text-lg truncate text-white">${auction.displayName}</h3>
-                            <div class="flex items-center text-green-400 font-bold text-xl">
+                            <div>
+                                <h3 class="font-bold text-lg text-white" title="${auction.displayName}">${auction.displayName}</h3>
+                                <button class="copy-btn flex items-center gap-1 mt-1 p-1 rounded-md hover:bg-gray-700" data-clipboard-text="${auction.displayName}" title="Copia nome giocatore">
+                                    <i data-lucide="copy" class="h-4 w-4 text-red-500"></i>
+                                    <span class="text-sm font-medium text-white">Copia!</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center text-green-400 font-bold text-xl mt-2">
                                 <i data-lucide="crown" class="mr-1 h-5 w-5"></i>
                                 <span>${auction.highestBid}</span>
                                 <span class="text-sm font-medium text-gray-400 ml-2">(${auction.leadingTeam})</span>
@@ -297,7 +304,7 @@
                                 ? `<div class="font-bold text-lg text-white bg-green-600 rounded-lg py-2">AGGIUDICATO!</div>` 
                                 : `<div class="timer-container">
                                         <div class="text-sm text-gray-400">Tempo Rimanente</div>
-                                        <div class="timer font-mono text-2xl font-bold tracking-tight text-white">00:00:00</div>
+                                        <div class="timer font-mono text-2xl font-bold tracking-tight text-white">${initialTimeDisplay}</div>
                                    </div>`
                             }
                         </div>
@@ -328,6 +335,7 @@
                 const trade = record.fields;
                 const endDate = new Date(new Date(trade.data).getTime() + AUCTION_DURATION_MS);
                 const isExpired = (endDate - new Date()) <= 0;
+                const initialTimeDisplay = formatTimeLeft(endDate - new Date()); // Calcolo il tempo iniziale
                 
                 const creditiOffertiHtml = trade.crediti_offerti ? `<span class="text-green-400 font-bold">+${trade.crediti_offerti} cr</span>` : '';
                 const creditiRichiestiHtml = trade.crediti_richiesti ? `<span class="text-red-400 font-bold">-${trade.crediti_richiesti} cr</span>` : '';
@@ -358,7 +366,7 @@
                                 ? `<div class="font-bold text-lg text-white bg-blue-600 rounded-lg py-2">SCAMBIO FATTO!</div>` 
                                 : `<div class="timer-container">
                                         <div class="text-sm text-gray-400">Tempo Rimanente</div>
-                                        <div class="timer font-mono text-2xl font-bold tracking-tight text-white">00:00:00</div>
+                                        <div class="timer font-mono text-2xl font-bold tracking-tight text-white">${initialTimeDisplay}</div>
                                    </div>`
                             }
                         </div>
@@ -441,6 +449,29 @@
         }
 
         // --- UTILS ---
+        function copyToClipboard(text, buttonElement) {
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = text;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            try {
+                document.execCommand('copy');
+                // Fornisce un feedback visivo cambiando l'icona e il testo
+                const originalContent = buttonElement.innerHTML;
+                buttonElement.innerHTML = `
+                    <i data-lucide="check" class="h-4 w-4 text-green-400"></i>
+                    <span class="text-sm font-medium text-white">Copiato!</span>`;
+                lucide.createIcons();
+                setTimeout(() => {
+                    buttonElement.innerHTML = originalContent;
+                    lucide.createIcons();
+                }, 1500);
+            } catch (err) {
+                console.error('Impossibile copiare il testo:', err);
+            }
+            document.body.removeChild(tempTextarea);
+        }
+
         function formatDate(dateTimeString) {
             if (!dateTimeString) return '';
             const date = new Date(dateTimeString);
@@ -494,9 +525,17 @@
             switchTab('svincolati');
             setInterval(main, 15000);
             setInterval(updateTimers, 1000);
+
+            // Listener unico per tutti i pulsanti "copia"
+            document.body.addEventListener('click', function(event) {
+                const copyButton = event.target.closest('.copy-btn');
+                if (copyButton) {
+                    const textToCopy = copyButton.dataset.clipboardText;
+                    copyToClipboard(textToCopy, copyButton);
+                }
+            });
         });
     </script>
 </body>
 </html>
-
 

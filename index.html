@@ -110,9 +110,13 @@
         const auctionsContainer = document.getElementById('auctionsContainer');
         const loader = document.getElementById('loader');
 
+        // *** CORREZIONE IMPORTANTE: Usiamo i percorsi corretti per Vercel ***
+        const GET_AUCTIONS_URL = '/api/get-auctions';
+        const POST_BID_URL = '/api/post-bid';
+
         async function fetchData() {
             try {
-                const response = await fetch('/.netlify/functions/get-auctions');
+                const response = await fetch(GET_AUCTIONS_URL);
                 if (!response.ok) {
                     throw new Error(`Errore di rete: ${response.statusText}`);
                 }
@@ -121,21 +125,24 @@
             } catch (error) {
                 console.error("Errore nel recupero dati:", error);
                 auctionsContainer.innerHTML = `<p class="text-red-500 text-center">Impossibile caricare le aste. Riprova più tardi.</p>`;
-                return []; // **CORREZIONE**: Restituisce un array vuoto per prevenire il crash
+                return [];
             }
         }
 
         function processAuctions(records) {
             const auctions = {};
-            if (!records) return auctions; // Sicurezza aggiuntiva
+            if (!records) return auctions;
 
             records.forEach(record => {
-                const playerName = record.fields.nome?.trim().toLowerCase();
+                const fields = record.fields;
+                if (!fields) return;
+
+                const playerName = fields.nome?.trim().toLowerCase();
                 if (!playerName) return;
 
                 if (!auctions[playerName]) {
                     auctions[playerName] = {
-                        displayName: record.fields.nome.trim(),
+                        displayName: fields.nome.trim(),
                         bids: [],
                         highestBid: -1,
                         leadingTeam: null,
@@ -144,11 +151,11 @@
                     };
                 }
                 
-                const offerta = parseInt(record.fields.offerta, 10);
+                const offerta = parseInt(fields.offerta, 10);
                 const currentBid = {
-                    team: record.fields.squadra,
+                    team: fields.squadra,
                     offer: offerta,
-                    timestamp: record.fields.data
+                    timestamp: fields.data 
                 };
                 auctions[playerName].bids.push(currentBid);
             });
@@ -285,7 +292,7 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch('/.netlify/functions/post-bid', {
+                const response = await fetch(POST_BID_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)

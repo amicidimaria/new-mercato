@@ -1,0 +1,28 @@
+# ===================================================================
+# Configurazione Robusta per Netlify
+# Questa configurazione è progettata per forzare l'ambiente di build
+# corretto, eliminando ogni ambiguità.
+# ===================================================================
+
+# Sezione [build]: Definisce cosa fare durante il deploy.
+[build]
+  # Comando esplicito per installare le dipendenze da package.json.
+  # Questo assicura che 'node-fetch' sia disponibile per le funzioni.
+  command = "npm install"
+
+# Sezione [functions]: Specifica come gestire le funzioni serverless.
+[functions]
+  # La directory che contiene il codice delle funzioni.
+  directory = "netlify/functions"
+  
+  # Specifichiamo 'esbuild' come bundler. È moderno e perfetto
+  # per la sintassi 'import' (ES Modules) che stiamo usando.
+  node_bundler = "esbuild"
+
+# Sezione [build.environment]: Imposta le variabili per l'ambiente di build.
+# QUESTA È LA PARTE PIÙ IMPORTANTE PER RISOLVERE IL PROBLEMA.
+[build.environment]
+  # Forziamo Netlify a usare una versione di Node.js moderna e stabile (18).
+  # Questo previene problemi di compatibilità con il codice e le dipendenze.
+  NODE_VERSION = "18"
+

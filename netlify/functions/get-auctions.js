@@ -1,47 +1,49 @@
-// netlify/functions/get-auctions.js
+// NESSUN IMPORT NECESSARIO: 'fetch' è già disponibile nell'ambiente Netlify (Node.js 18+)
 
-// Sintassi moderna per importare 'node-fetch'
-import fetch from 'node-fetch';
+// Funzione per accedere in modo sicuro alle variabili d'ambiente
+const getEnvVar = (name) => {
+    const value = process.env[name];
+    if (!value) {
+        console.error(`ERRORE CRITICO: La variabile d'ambiente "${name}" non è stata trovata.`);
+    }
+    return value;
+};
 
-const {
-    AIRTABLE_API_KEY,
-    AIRTABLE_BASE_ID,
-    AIRTABLE_TABLE_NAME
-} = process.env;
-
-// Sintassi moderna per esportare la funzione handler
-export const handler = async (event, context) => {
-    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}?sort[0][field]=data&sort[0][direction]=desc`;
-
+export const handler = async () => {
     try {
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${AIRTABLE_API_KEY}`
-            }
-        });
+        const AIRTABLE_API_KEY = getEnvVar('AIRTABLE_API_KEY');
+        const AIRTABLE_BASE_ID = getEnvVar('AIRTABLE_BASE_ID');
+        const AIRTABLE_TABLE_NAME = getEnvVar('AIRTABLE_TABLE_NAME');
 
-        if (!response.ok) {
+        if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID || !AIRTABLE_TABLE_NAME) {
             return {
-                statusCode: response.status,
-                body: JSON.stringify({ message: response.statusText })
+                statusCode: 500,
+                body: JSON.stringify({ error: "Configurazione del server incompleta." }),
             };
         }
 
-        const data = await response.json();
+        const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}?sort[0][field]=data&sort[0][direction]=desc`;
 
+        const response = await fetch(url, {
+            headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` },
+        });
+
+        if (!response.ok) {
+            console.error("Errore da Airtable:", await response.text());
+            throw new Error(`Errore di rete: ${response.statusText}`);
+        }
+
+        const data = await response.json();
         return {
             statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data.records),
         };
+
     } catch (error) {
-        console.error('Errore nella funzione get-auctions:', error);
+        console.error("ERRORE NON GESTITO in 'get-auctions':", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Errore interno del server.' })
+            body: JSON.stringify({ error: "Impossibile recuperare le aste." }),
         };
     }
 };

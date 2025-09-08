@@ -21,8 +21,8 @@
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
         .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #22c55e;
+            border: 4px solid #4a5568; /* grigio scuro */
+            border-top: 4px solid #22c55e; /* verde */
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -32,7 +32,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* Stili per i tab attivi e inattivi */
         .tab-btn.active {
             border-color: #22c55e;
             color: #22c55e;
@@ -45,30 +44,26 @@
     <div class="container mx-auto p-4 md:p-8 max-w-7xl relative">
 
         <header class="text-center mb-8 md:mb-12 pt-10">
-            <!--<img src="logo25-26.png" alt="Amici di Maria" class="w-40 h-40 mx-auto mb-4 rounded-full object-cover">-->
-            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight uppercase">SVINCOLATI E SCAMBI</h1>
+            <img src="logo25-26.png" alt="Amici di Maria" class="w-40 h-40 mx-auto mb-4 rounded-full object-cover">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight uppercase">MERCATO SVINCOLATI E SCAMBI</h1>
             <p class="text-gray-400 mt-2 text-lg">Stagione 2025/2026</p>
         </header>
 
-        <!-- Selettore Tab -->
         <div class="mb-6 flex justify-center border-b border-gray-700">
             <button id="tab-svincolati" class="tab-btn active font-semibold py-3 px-6 border-b-2 transition">SVINCOLATI</button>
             <button id="tab-scambi" class="tab-btn text-gray-400 font-semibold py-3 px-6 border-b-2 border-transparent hover:text-white transition">SCAMBI</button>
         </div>
 
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            <!-- COLONNA SINISTRA: FORM -->
             <div class="lg:col-span-1">
-                <!-- FORM SVINCOLATI (Visibile di default) -->
                 <div id="form-svincolati-container" class="bg-gray-800 p-6 rounded-2xl card-shadow sticky top-8">
                      <h2 class="text-2xl font-bold mb-4 flex items-center text-white">
                         <i data-lucide="gavel" class="mr-2"></i>
                         Offerta per Svincolato
                     </h2>
                     <form id="svincolatiForm">
-                        <div class="mb-4">
+                         <div class="mb-4">
                             <label for="squadra_svincolati" class="block text-sm font-medium text-gray-300 mb-1">Seleziona squadra</label>
                             <select id="squadra_svincolati" name="squadra" required class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                                 <option value="" disabled selected>- Seleziona -</option>
@@ -94,7 +89,6 @@
                     </form>
                 </div>
                 
-                <!-- FORM SCAMBI (Nascosto di default) -->
                 <div id="form-scambi-container" class="hidden bg-gray-800 p-6 rounded-2xl card-shadow sticky top-8">
                     <h2 class="text-2xl font-bold mb-4 flex items-center text-white">
                         <i data-lucide="repeat" class="mr-2"></i>
@@ -135,7 +129,7 @@
                             <label for="password_scambi" class="block text-sm font-medium text-gray-300 mb-1">Password della tua Squadra</label>
                             <input type="password" id="password_scambi" name="password" required class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                         </div>
-                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">
                             Pubblica Proposta
                         </button>
                         <div id="scambiFormResult" class="mt-4 text-center"></div>
@@ -143,21 +137,19 @@
                 </div>
             </div>
 
-            <!-- COLONNA DESTRA: CONTENUTO DINAMICO -->
             <div class="lg:col-span-2">
-                 <!-- CONTENITORE SVINCOLATI (Visibile di default) -->
                 <div id="content-svincolati" class="bg-gray-800 p-6 rounded-2xl card-shadow">
                     <h2 class="text-2xl font-bold mb-1 text-white">Aste in Corso</h2>
-                    <p class="text-lm text-red-500 font-semibold mb-4">IL GIOCATORE È ASSEGNATO AL MIGLIOR OFFERENTE ALLO SCADERE DELLE 24H DALLA PRIMA OFFERTA</p>
+                    <p class="text-sm text-red-500 font-semibold mb-4">IL GIOCATORE È ASSEGNATO AL MIGLIOR OFFERENTE ALLO SCADERE DELLE 24H DALLA PRIMA OFFERTA</p>
+                    <p class="text-sm text-red-500 font-semibold mb-4">NON OFFRITE MAI PIÙ DI QUANTO AVETE<br>(se avete 3 crediti e fate 3 offerte da 1 quei crediti sono vincolati)</p>                    
                     <div id="auctionsContainer">
                         <div class="flex justify-center items-center py-16"><div class="loader"></div></div>
                     </div>
                 </div>
 
-                <!-- CONTENITORE SCAMBI (Nascosto di default) -->
                 <div id="content-scambi" class="hidden bg-gray-800 p-6 rounded-2xl card-shadow">
                     <h2 class="text-2xl font-bold mb-1 text-white">Scambi Proposti</h2>
-                    <p class="text-lm text-red-500 font-semibold mb-4">LO SCAMBIO È UFFICIALE ALLO SCADERE DELLE 24H DALLA PROPOSTA</p>
+                    <p class="text-sm text-blue-400 font-semibold mb-4">LO SCAMBIO È UFFICIALE ALLO SCADERE DELLE 24H DALLA PROPOSTA</p>
                     <div id="tradesContainer">
                         <div class="flex justify-center items-center py-16"><div class="loader"></div></div>
                     </div>
@@ -169,39 +161,33 @@
     <script>
         const AUCTION_DURATION_MS = 24 * 60 * 60 * 1000;
 
-        // --- GESTIONE TAB ---
+        // --- RIFERIMENTI DOM ---
         const tabSvincolati = document.getElementById('tab-svincolati');
         const tabScambi = document.getElementById('tab-scambi');
-        
         const formSvincolati = document.getElementById('form-svincolati-container');
         const formScambi = document.getElementById('form-scambi-container');
-        
         const contentSvincolati = document.getElementById('content-svincolati');
         const contentScambi = document.getElementById('content-scambi');
-
         let activeTab = 'svincolati';
 
+        // --- GESTIONE TAB ---
         tabSvincolati.addEventListener('click', () => switchTab('svincolati'));
         tabScambi.addEventListener('click', () => switchTab('scambi'));
 
         function switchTab(tabName) {
             activeTab = tabName;
-            if (tabName === 'svincolati') {
-                tabSvincolati.classList.add('active');
-                tabScambi.classList.remove('active');
-                formSvincolati.classList.remove('hidden');
-                formScambi.classList.add('hidden');
-                contentSvincolati.classList.remove('hidden');
-                contentScambi.classList.add('hidden');
-            } else {
-                tabScambi.classList.add('active');
-                tabSvincolati.classList.remove('active');
-                formScambi.classList.remove('hidden');
-                formSvincolati.classList.add('hidden');
-                contentScambi.classList.remove('hidden');
-                contentSvincolati.classList.add('hidden');
-            }
-            main(); // Ricarica i dati per la nuova scheda attiva
+            const isSvincolati = tabName === 'svincolati';
+            
+            tabSvincolati.classList.toggle('active', isSvincolati);
+            tabScambi.classList.toggle('active', !isSvincolati);
+            
+            formSvincolati.classList.toggle('hidden', !isSvincolati);
+            formScambi.classList.toggle('hidden', isSvincolati);
+
+            contentSvincolati.classList.toggle('hidden', !isSvincolati);
+            contentScambi.classList.toggle('hidden', isSvincolati);
+            
+            main();
         }
         
         // --- LOGICA GENERICA ---
@@ -222,7 +208,7 @@
         
         // --- LOGICA SVINCOLATI ---
         function processAuctions(records) {
-             const auctions = {};
+            const auctions = {};
             records.forEach(record => {
                 const playerName = record.fields.nome?.trim().toLowerCase();
                 if (!playerName) return;
@@ -248,14 +234,23 @@
                 if(auction.bids.length > 0) {
                     auction.firstBidTimestamp = auction.bids[0].timestamp;
                     auction.lastBidTimestamp = auction.bids[auction.bids.length - 1].timestamp;
-                    auction.highestBid = Math.max(...auction.bids.map(b => b.offer));
-                    auction.leadingTeam = auction.bids.find(b => b.offer === auction.highestBid).team;
+                    
+                    let highestBid = -1;
+                    let leadingTeam = null;
+                    auction.bids.forEach(bid => {
+                        if (bid.offer > highestBid) {
+                            highestBid = bid.offer;
+                            leadingTeam = bid.team;
+                        }
+                    });
+                    auction.highestBid = highestBid;
+                    auction.leadingTeam = leadingTeam;
                 }
             }
             return auctions;
         }
 
-        function renderAuctions(auctions) {
+        function renderAuctions(auctions, openDetails = new Set()) {
             const container = document.getElementById('auctionsContainer');
             container.innerHTML = '';
             
@@ -272,11 +267,20 @@
 
                 const endDate = new Date(new Date(auction.firstBidTimestamp).getTime() + AUCTION_DURATION_MS);
                 const isExpired = (endDate - new Date()) <= 0;
+                const isDetailsOpen = openDetails.has(playerName);
 
                 const card = document.createElement('div');
                 card.className = `border border-gray-700 rounded-xl p-4 mb-4 transition-all ${isExpired ? 'bg-gray-700/50 opacity-70' : 'bg-gray-800'}`;
                 card.setAttribute('data-end-time', endDate.toISOString());
-                card.setAttribute('data-type', 'auction');
+                card.setAttribute('data-player', playerName);
+
+                const historyHtml = auction.bids.map(bid => `
+                    <li class="flex justify-between items-center text-xs py-1 ${bid.offer === auction.highestBid ? 'font-bold text-green-400' : ''}">
+                        <span>${bid.team}</span>
+                        <span class="text-gray-400">${formatDate(bid.timestamp)}</span>
+                        <span>${bid.offer}</span>
+                    </li>
+                `).join('');
 
                 card.innerHTML = `
                     <div class="grid grid-cols-3 gap-4 items-center">
@@ -297,6 +301,12 @@
                                    </div>`
                             }
                         </div>
+                    </div>
+                    <div class="mt-4 border-t border-gray-700 pt-2">
+                        <details ${isDetailsOpen ? 'open' : ''}>
+                            <summary class="text-sm font-medium cursor-pointer text-gray-400 hover:text-white">Storico Rilanci (${auction.bids.length})</summary>
+                            <ul class="mt-2 space-y-1 pr-2">${historyHtml}</ul>
+                        </details>
                     </div>
                 `;
                 container.appendChild(card);
@@ -325,7 +335,6 @@
                 const card = document.createElement('div');
                 card.className = `border border-gray-700 rounded-xl p-4 mb-4 transition-all ${isExpired ? 'bg-gray-700/50 opacity-70' : 'bg-gray-800'}`;
                 card.setAttribute('data-end-time', endDate.toISOString());
-                card.setAttribute('data-type', 'trade');
                 
                 card.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
@@ -334,13 +343,13 @@
                                 <div class="text-center w-2/5">
                                     <div class="font-bold text-white">${trade.squadra_proponente}</div>
                                     <div class="text-sm text-gray-300">${trade.giocatore_offerto}</div>
-                                    <div class="text-s">${creditiOffertiHtml}</div>
+                                    <div class="text-xs">${creditiOffertiHtml}</div>
                                 </div>
                                 <i data-lucide="repeat" class="text-blue-400 w-1/5 text-center"></i>
                                 <div class="text-center w-2/5">
                                     <div class="font-bold text-white">${trade.squadra_ricevente}</div>
                                     <div class="text-sm text-gray-300">${trade.giocatore_richiesto}</div>
-                                    <div class="text-s">${creditiRichiestiHtml}</div>
+                                    <div class="text-xs">${creditiRichiestiHtml}</div>
                                 </div>
                             </div>
                         </div>
@@ -378,7 +387,7 @@
             const squadra = (formType === 'svincolati') ? formData.get('squadra') : formData.get('squadra_proponente');
 
             if (TEAM_PASSWORDS[squadra] !== password) {
-                showFormMessage(resultDiv, 'Password errata per la squadra selezionata!', 'error');
+                showFormMessage(resultDiv, 'Password errata!', 'error');
                 submitButton.disabled = false;
                 submitButton.textContent = formType === 'svincolati' ? 'Invia Offerta' : 'Pubblica Proposta';
                 return;
@@ -393,8 +402,8 @@
                     squadra_ricevente: formData.get('squadra_ricevente'),
                     giocatore_offerto: formData.get('giocatore_offerto'),
                     giocatore_richiesto: formData.get('giocatore_richiesto'),
-                    crediti_offerti: parseInt(formData.get('crediti_offerti'), 10) || 0,
-                    crediti_richiesti: parseInt(formData.get('crediti_richiesti'), 10) || 0,
+                    crediti_offerti: parseInt(formData.get('crediti_offerti'), 10) || null,
+                    crediti_richiesti: parseInt(formData.get('crediti_richiesti'), 10) || null,
                 };
             }
 
@@ -408,17 +417,17 @@
 
                 if (!response.ok) {
                     const errorBody = await response.json();
-                    console.error('Dettagli errore da Airtable:', errorBody);
-                    throw new Error('Errore durante l\'invio ad Airtable.');
+                    console.error('Errore da Airtable:', errorBody);
+                    throw new Error('Errore durante l\'invio.');
                 }
                 
-                showFormMessage(resultDiv, 'Proposta inviata con successo!', 'success');
+                showFormMessage(resultDiv, 'Proposta inviata!', 'success');
                 form.reset();
                 await main();
 
             } catch (error) {
                 console.error('Errore invio dati:', error);
-                showFormMessage(resultDiv, 'Errore durante l\'invio. Riprova.', 'error');
+                showFormMessage(resultDiv, 'Errore durante l\'invio.', 'error');
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = formType === 'svincolati' ? 'Invia Offerta' : 'Pubblica Proposta';
@@ -427,11 +436,17 @@
         
         function showFormMessage(element, message, type) {
             element.textContent = message;
-            element.className = `mt-4 text-center text-sm font-medium ${type === 'success' ? 'text-green-600' : 'text-red-500'}`;
+            element.className = `mt-4 text-center text-sm font-medium ${type === 'success' ? 'text-green-500' : 'text-red-500'}`;
             setTimeout(() => { element.textContent = ''; }, 4000);
         }
 
         // --- UTILS ---
+        function formatDate(dateTimeString) {
+            if (!dateTimeString) return '';
+            const date = new Date(dateTimeString);
+            return date.toLocaleString('it-IT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        }
+
         function formatTimeLeft(ms) {
             if (ms <= 0) return "00:00:00";
             const hours = Math.floor(ms / (1000 * 60 * 60)).toString().padStart(2, '0');
@@ -459,10 +474,15 @@
         
         // --- INIZIALIZZAZIONE ---
         async function main() {
+            const openDetails = new Set();
             if (activeTab === 'svincolati') {
+                 document.querySelectorAll('#auctionsContainer details[open]').forEach(detail => {
+                    const card = detail.closest('[data-player]');
+                    if (card) openDetails.add(card.dataset.player);
+                });
                 const records = await fetchData(AIRTABLE_CONFIG.tableName);
                 const auctions = processAuctions(records);
-                renderAuctions(auctions);
+                renderAuctions(auctions, openDetails);
             } else {
                 const records = await fetchData(AIRTABLE_CONFIG.tradesTableName);
                 renderTrades(records);
@@ -471,11 +491,12 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            switchTab('svincolati'); // Imposta la scheda iniziale
-            setInterval(main, 15000); // Aggiornamento dati ogni 15 secondi
-            setInterval(updateTimers, 1000); // Aggiornamento timer ogni secondo
+            switchTab('svincolati');
+            setInterval(main, 15000);
+            setInterval(updateTimers, 1000);
         });
     </script>
 </body>
 </html>
+
 

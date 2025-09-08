@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MERCATO SVINCOLATI E SCAMBI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
+    
+    <script src="config.js"></script>
+
+    <style>
+        body {
+            font-family: 'Share Tech', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #22c55e;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Stili per i tab attivi e inattivi */
+        .tab-btn.active {
+            border-color: #22c55e;
+            color: #22c55e;
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased bg-gray-900 text-gray-200">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl relative">
+
+        <header class="text-center mb-8 md:mb-12 pt-10">
+            <!--<img src="logo25-26.png" alt="Amici di Maria" class="w-40 h-40 mx-auto mb-4 rounded-full object-cover">-->
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight uppercase">SVINCOLATI E SCAMBI</h1>
+            <p class="text-gray-400 mt-2 text-lg">Stagione 2025/2026</p>
+        </header>
+
+        <!-- Selettore Tab -->
+        <div class="mb-6 flex justify-center border-b border-gray-700">
+            <button id="tab-svincolati" class="tab-btn active font-semibold py-3 px-6 border-b-2 transition">SVINCOLATI</button>
+            <button id="tab-scambi" class="tab-btn text-gray-400 font-semibold py-3 px-6 border-b-2 border-transparent hover:text-white transition">SCAMBI</button>
+        </div>
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- COLONNA SINISTRA: FORM -->
+            <div class="lg:col-span-1">
+                <!-- FORM SVINCOLATI (Visibile di default) -->
+                <div id="form-svincolati-container" class="bg-gray-800 p-6 rounded-2xl card-shadow sticky top-8">
+                     <h2 class="text-2xl font-bold mb-4 flex items-center text-white">
+                        <i data-lucide="gavel" class="mr-2"></i>
+                        Offerta per Svincolato
+                    </h2>
+                    <form id="svincolatiForm">
+                        <div class="mb-4">
+                            <label for="squadra_svincolati" class="block text-sm font-medium text-gray-300 mb-1">Seleziona squadra</label>
+                            <select id="squadra_svincolati" name="squadra" required class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                                <option value="" disabled selected>- Seleziona -</option>
+                                <option value="Gonzi">Gonzi</option><option value="Chivas">Chivas</option><option value="Minturno">Minturno</option><option value="Califfo">Califfo</option><option value="BDS">BDS</option><option value="Diavolone">Diavolone</option><option value="RealSpillo">Real Spillo</option><option value="Pandamonio">Pandamonio</option><option value="SpaccioUno">SpaccioUno</option><option value="SantaMasterella">Santa Masterella</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="nome_svincolati" class="block text-sm font-medium text-gray-300 mb-1">Giocatore (Cognome e Squadra)</label>
+                            <input type="text" id="nome_svincolati" name="nome" required placeholder="Es. Lautaro Martinez (Inter)" class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <div class="mb-4">
+                            <label for="offerta_svincolati" class="block text-sm font-medium text-gray-300 mb-1">Offerta (Fantamilioni)</label>
+                            <input type="number" id="offerta_svincolati" name="offerta" required min="1" placeholder="Es. 25" class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <div class="mb-6">
+                            <label for="password_svincolati" class="block text-sm font-medium text-gray-300 mb-1">Password Squadra</label>
+                            <input type="password" id="password_svincolati" name="password" required class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">
+                            Invia Offerta
+                        </button>
+                        <div id="svincolatiFormResult" class="mt-4 text-center"></div>
+                    </form>
+                </div>
+                
+                <!-- FORM SCAMBI (Nascosto di default) -->
+                <div id="form-scambi-container" class="hidden bg-gray-800 p-6 rounded-2xl card-shadow sticky top-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center text-white">
+                        <i data-lucide="repeat" class="mr-2"></i>
+                        Proponi uno Scambio
+                    </h2>
+                    <form id="scambiForm">
+                        <div class="mb-4">
+                            <label for="squadra_proponente" class="block text-sm font-medium text-gray-300 mb-1">La tua Squadra (che propone)</label>
+                            <select id="squadra_proponente" name="squadra_proponente" required class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                                <option value="" disabled selected>- Seleziona -</option>
+                                <option value="Gonzi">Gonzi</option><option value="Chivas">Chivas</option><option value="Minturno">Minturno</option><option value="Califfo">Califfo</option><option value="BDS">BDS</option><option value="Diavolone">Diavolone</option><option value="RealSpillo">Real Spillo</option><option value="Pandamonio">Pandamonio</option><option value="SpaccioUno">SpaccioUno</option><option value="SantaMasterella">Santa Masterella</option>
+                            </select>
+                        </div>
+                         <div class="mb-4">
+                            <label for="squadra_ricevente" class="block text-sm font-medium text-gray-300 mb-1">Squadra a cui proponi</label>
+                            <select id="squadra_ricevente" name="squadra_ricevente" required class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                                <option value="" disabled selected>- Seleziona -</option>
+                               <option value="Gonzi">Gonzi</option><option value="Chivas">Chivas</option><option value="Minturno">Minturno</option><option value="Califfo">Califfo</option><option value="BDS">BDS</option><option value="Diavolone">Diavolone</option><option value="RealSpillo">Real Spillo</option><option value="Pandamonio">Pandamonio</option><option value="SpaccioUno">SpaccioUno</option><option value="SantaMasterella">Santa Masterella</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="giocatore_offerto" class="block text-sm font-medium text-gray-300 mb-1">Giocatore che OFFRI</label>
+                            <input type="text" id="giocatore_offerto" name="giocatore_offerto" required placeholder="Es. Kvaratskhelia (Napoli)" class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <div class="mb-4">
+                            <label for="giocatore_richiesto" class="block text-sm font-medium text-gray-300 mb-1">Giocatore che CHIEDI</label>
+                            <input type="text" id="giocatore_richiesto" name="giocatore_richiesto" required placeholder="Es. Leao (Milan)" class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <div class="mb-4">
+                            <label for="crediti_offerti" class="block text-sm font-medium text-gray-300 mb-1">Crediti che OFFRI (opzionale)</label>
+                            <input type="number" id="crediti_offerti" name="crediti_offerti" min="0" placeholder="Es. 10" class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                         <div class="mb-4">
+                            <label for="crediti_richiesti" class="block text-sm font-medium text-gray-300 mb-1">Crediti che CHIEDI (opzionale)</label>
+                            <input type="number" id="crediti_richiesti" name="crediti_richiesti" min="0" placeholder="Es. 5" class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <div class="mb-6">
+                            <label for="password_scambi" class="block text-sm font-medium text-gray-300 mb-1">Password della tua Squadra</label>
+                            <input type="password" id="password_scambi" name="password" required class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">
+                            Pubblica Proposta
+                        </button>
+                        <div id="scambiFormResult" class="mt-4 text-center"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- COLONNA DESTRA: CONTENUTO DINAMICO -->
+            <div class="lg:col-span-2">
+                 <!-- CONTENITORE SVINCOLATI (Visibile di default) -->
+                <div id="content-svincolati" class="bg-gray-800 p-6 rounded-2xl card-shadow">
+                    <h2 class="text-2xl font-bold mb-1 text-white">Aste in Corso</h2>
+                    <p class="text-lm text-red-500 font-semibold mb-4">IL GIOCATORE È ASSEGNATO AL MIGLIOR OFFERENTE ALLO SCADERE DELLE 24H DALLA PRIMA OFFERTA</p>
+                    <div id="auctionsContainer">
+                        <div class="flex justify-center items-center py-16"><div class="loader"></div></div>
+                    </div>
+                </div>
+
+                <!-- CONTENITORE SCAMBI (Nascosto di default) -->
+                <div id="content-scambi" class="hidden bg-gray-800 p-6 rounded-2xl card-shadow">
+                    <h2 class="text-2xl font-bold mb-1 text-white">Scambi Proposti</h2>
+                    <p class="text-lm text-red-500 font-semibold mb-4">LO SCAMBIO È UFFICIALE ALLO SCADERE DELLE 24H DALLA PROPOSTA</p>
+                    <div id="tradesContainer">
+                        <div class="flex justify-center items-center py-16"><div class="loader"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const AUCTION_DURATION_MS = 24 * 60 * 60 * 1000;
+
+        // --- GESTIONE TAB ---
+        const tabSvincolati = document.getElementById('tab-svincolati');
+        const tabScambi = document.getElementById('tab-scambi');
+        
+        const formSvincolati = document.getElementById('form-svincolati-container');
+        const formScambi = document.getElementById('form-scambi-container');
+        
+        const contentSvincolati = document.getElementById('content-svincolati');
+        const contentScambi = document.getElementById('content-scambi');
+
+        let activeTab = 'svincolati';
+
+        tabSvincolati.addEventListener('click', () => switchTab('svincolati'));
+        tabScambi.addEventListener('click', () => switchTab('scambi'));
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            if (tabName === 'svincolati') {
+                tabSvincolati.classList.add('active');
+                tabScambi.classList.remove('active');
+                formSvincolati.classList.remove('hidden');
+                formScambi.classList.add('hidden');
+                contentSvincolati.classList.remove('hidden');
+                contentScambi.classList.add('hidden');
+            } else {
+                tabScambi.classList.add('active');
+                tabSvincolati.classList.remove('active');
+                formScambi.classList.remove('hidden');
+                formSvincolati.classList.add('hidden');
+                contentScambi.classList.remove('hidden');
+                contentSvincolati.classList.add('hidden');
+            }
+            main(); // Ricarica i dati per la nuova scheda attiva
+        }
+        
+        // --- LOGICA GENERICA ---
+        async function fetchData(tableName) {
+            const container = activeTab === 'svincolati' ? document.getElementById('auctionsContainer') : document.getElementById('tradesContainer');
+            try {
+                const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${tableName}?sort[0][field]=data&sort[0][direction]=desc`;
+                const response = await fetch(url, { headers: { Authorization: `Bearer ${AIRTABLE_CONFIG.readApiKey}` } });
+                if (!response.ok) throw new Error(`Errore di rete: ${response.statusText}`);
+                const data = await response.json();
+                return data.records;
+            } catch (error) {
+                console.error("Errore nel recupero dati:", error);
+                container.innerHTML = `<p class="text-red-500 text-center">Impossibile caricare i dati. Riprova più tardi.</p>`;
+                return [];
+            }
+        }
+        
+        // --- LOGICA SVINCOLATI ---
+        function processAuctions(records) {
+             const auctions = {};
+            records.forEach(record => {
+                const playerName = record.fields.nome?.trim().toLowerCase();
+                if (!playerName) return;
+
+                if (!auctions[playerName]) {
+                    auctions[playerName] = {
+                        displayName: record.fields.nome.trim(),
+                        bids: [],
+                        highestBid: -1,
+                        leadingTeam: null,
+                        lastBidTimestamp: null,
+                        firstBidTimestamp: null
+                    };
+                }
+                
+                const offerta = parseInt(record.fields.offerta, 10);
+                auctions[playerName].bids.push({ team: record.fields.squadra, offer: offerta, timestamp: record.fields.data });
+            });
+
+            for (const playerName in auctions) {
+                const auction = auctions[playerName];
+                auction.bids.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+                if(auction.bids.length > 0) {
+                    auction.firstBidTimestamp = auction.bids[0].timestamp;
+                    auction.lastBidTimestamp = auction.bids[auction.bids.length - 1].timestamp;
+                    auction.highestBid = Math.max(...auction.bids.map(b => b.offer));
+                    auction.leadingTeam = auction.bids.find(b => b.offer === auction.highestBid).team;
+                }
+            }
+            return auctions;
+        }
+
+        function renderAuctions(auctions) {
+            const container = document.getElementById('auctionsContainer');
+            container.innerHTML = '';
+            
+            const sortedKeys = Object.keys(auctions).sort((a, b) => new Date(auctions[b].lastBidTimestamp) - new Date(auctions[a].lastBidTimestamp));
+
+            if (sortedKeys.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 text-center py-8">Nessuna asta in corso. Fai la prima offerta!</p>`;
+                return;
+            }
+
+            sortedKeys.forEach(playerName => {
+                const auction = auctions[playerName];
+                if (!auction.firstBidTimestamp) return;
+
+                const endDate = new Date(new Date(auction.firstBidTimestamp).getTime() + AUCTION_DURATION_MS);
+                const isExpired = (endDate - new Date()) <= 0;
+
+                const card = document.createElement('div');
+                card.className = `border border-gray-700 rounded-xl p-4 mb-4 transition-all ${isExpired ? 'bg-gray-700/50 opacity-70' : 'bg-gray-800'}`;
+                card.setAttribute('data-end-time', endDate.toISOString());
+                card.setAttribute('data-type', 'auction');
+
+                card.innerHTML = `
+                    <div class="grid grid-cols-3 gap-4 items-center">
+                        <div class="col-span-3 md:col-span-1">
+                            <h3 class="font-bold text-lg truncate text-white">${auction.displayName}</h3>
+                            <div class="flex items-center text-green-400 font-bold text-xl">
+                                <i data-lucide="crown" class="mr-1 h-5 w-5"></i>
+                                <span>${auction.highestBid}</span>
+                                <span class="text-sm font-medium text-gray-400 ml-2">(${auction.leadingTeam})</span>
+                            </div>
+                        </div>
+                        <div class="col-span-3 md:col-span-2 text-center">
+                            ${isExpired 
+                                ? `<div class="font-bold text-lg text-white bg-green-600 rounded-lg py-2">AGGIUDICATO!</div>` 
+                                : `<div class="timer-container">
+                                        <div class="text-sm text-gray-400">Tempo Rimanente</div>
+                                        <div class="timer font-mono text-2xl font-bold tracking-tight text-white">00:00:00</div>
+                                   </div>`
+                            }
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+        
+        // --- LOGICA SCAMBI ---
+        function renderTrades(records) {
+            const container = document.getElementById('tradesContainer');
+            container.innerHTML = '';
+
+            if (records.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 text-center py-8">Nessuno scambio proposto. Iniziane uno!</p>`;
+                return;
+            }
+
+            records.forEach(record => {
+                const trade = record.fields;
+                const endDate = new Date(new Date(trade.data).getTime() + AUCTION_DURATION_MS);
+                const isExpired = (endDate - new Date()) <= 0;
+                
+                const creditiOffertiHtml = trade.crediti_offerti ? `<span class="text-green-400 font-bold">+${trade.crediti_offerti} cr</span>` : '';
+                const creditiRichiestiHtml = trade.crediti_richiesti ? `<span class="text-red-400 font-bold">-${trade.crediti_richiesti} cr</span>` : '';
+
+                const card = document.createElement('div');
+                card.className = `border border-gray-700 rounded-xl p-4 mb-4 transition-all ${isExpired ? 'bg-gray-700/50 opacity-70' : 'bg-gray-800'}`;
+                card.setAttribute('data-end-time', endDate.toISOString());
+                card.setAttribute('data-type', 'trade');
+                
+                card.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <div class="md:col-span-2">
+                            <div class="flex items-center justify-between">
+                                <div class="text-center w-2/5">
+                                    <div class="font-bold text-white">${trade.squadra_proponente}</div>
+                                    <div class="text-sm text-gray-300">${trade.giocatore_offerto}</div>
+                                    <div class="text-s">${creditiOffertiHtml}</div>
+                                </div>
+                                <i data-lucide="repeat" class="text-blue-400 w-1/5 text-center"></i>
+                                <div class="text-center w-2/5">
+                                    <div class="font-bold text-white">${trade.squadra_ricevente}</div>
+                                    <div class="text-sm text-gray-300">${trade.giocatore_richiesto}</div>
+                                    <div class="text-s">${creditiRichiestiHtml}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:col-span-1 text-center">
+                             ${isExpired 
+                                ? `<div class="font-bold text-lg text-white bg-blue-600 rounded-lg py-2">SCAMBIO FATTO!</div>` 
+                                : `<div class="timer-container">
+                                        <div class="text-sm text-gray-400">Tempo Rimanente</div>
+                                        <div class="timer font-mono text-2xl font-bold tracking-tight text-white">00:00:00</div>
+                                   </div>`
+                            }
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // --- GESTIONE FORM ---
+        document.getElementById('svincolatiForm').addEventListener('submit', (e) => handleFormSubmit(e, 'svincolati'));
+        document.getElementById('scambiForm').addEventListener('submit', (e) => handleFormSubmit(e, 'scambi'));
+
+        async function handleFormSubmit(event, formType) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = form.querySelector('button[type="submit"]');
+            const resultDiv = document.getElementById(`${formType}FormResult`);
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Invio...';
+
+            const formData = new FormData(form);
+            const password = formData.get('password');
+            const squadra = (formType === 'svincolati') ? formData.get('squadra') : formData.get('squadra_proponente');
+
+            if (TEAM_PASSWORDS[squadra] !== password) {
+                showFormMessage(resultDiv, 'Password errata per la squadra selezionata!', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = formType === 'svincolati' ? 'Invia Offerta' : 'Pubblica Proposta';
+                return;
+            }
+            
+            let fields = {};
+            if (formType === 'svincolati') {
+                fields = { squadra: formData.get('squadra'), nome: formData.get('nome'), offerta: formData.get('offerta') };
+            } else {
+                fields = {
+                    squadra_proponente: formData.get('squadra_proponente'),
+                    squadra_ricevente: formData.get('squadra_ricevente'),
+                    giocatore_offerto: formData.get('giocatore_offerto'),
+                    giocatore_richiesto: formData.get('giocatore_richiesto'),
+                    crediti_offerti: parseInt(formData.get('crediti_offerti'), 10) || 0,
+                    crediti_richiesti: parseInt(formData.get('crediti_richiesti'), 10) || 0,
+                };
+            }
+
+            try {
+                const tableName = (formType === 'svincolati') ? AIRTABLE_CONFIG.tableName : AIRTABLE_CONFIG.tradesTableName;
+                const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${tableName}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${AIRTABLE_CONFIG.writeApiKey}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fields })
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    console.error('Dettagli errore da Airtable:', errorBody);
+                    throw new Error('Errore durante l\'invio ad Airtable.');
+                }
+                
+                showFormMessage(resultDiv, 'Proposta inviata con successo!', 'success');
+                form.reset();
+                await main();
+
+            } catch (error) {
+                console.error('Errore invio dati:', error);
+                showFormMessage(resultDiv, 'Errore durante l\'invio. Riprova.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = formType === 'svincolati' ? 'Invia Offerta' : 'Pubblica Proposta';
+            }
+        }
+        
+        function showFormMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `mt-4 text-center text-sm font-medium ${type === 'success' ? 'text-green-600' : 'text-red-500'}`;
+            setTimeout(() => { element.textContent = ''; }, 4000);
+        }
+
+        // --- UTILS ---
+        function formatTimeLeft(ms) {
+            if (ms <= 0) return "00:00:00";
+            const hours = Math.floor(ms / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((ms / 1000 / 60) % 60).toString().padStart(2, '0');
+            const seconds = Math.floor((ms / 1000) % 60).toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+        
+        function updateTimers() {
+            document.querySelectorAll('[data-end-time]').forEach(card => {
+                const timerEl = card.querySelector('.timer');
+                if(!timerEl) return;
+
+                const endTime = new Date(card.dataset.endTime);
+                const timeLeft = endTime - new Date();
+
+                if (timeLeft <= 0) {
+                    timerEl.textContent = "00:00:00";
+                    if (!card.classList.contains('opacity-70')) { main(); }
+                } else {
+                    timerEl.textContent = formatTimeLeft(timeLeft);
+                }
+            });
+        }
+        
+        // --- INIZIALIZZAZIONE ---
+        async function main() {
+            if (activeTab === 'svincolati') {
+                const records = await fetchData(AIRTABLE_CONFIG.tableName);
+                const auctions = processAuctions(records);
+                renderAuctions(auctions);
+            } else {
+                const records = await fetchData(AIRTABLE_CONFIG.tradesTableName);
+                renderTrades(records);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            switchTab('svincolati'); // Imposta la scheda iniziale
+            setInterval(main, 15000); // Aggiornamento dati ogni 15 secondi
+            setInterval(updateTimers, 1000); // Aggiornamento timer ogni secondo
+        });
+    </script>
+</body>
+</html>
+

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercato Svincolati PRO (Sicuro)</title>
+    <title>Mercato Svincolati PRO</title>
     <!-- Tailwind CSS per lo stile -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Icone Lucide -->
@@ -37,7 +37,6 @@
 
     <div class="container mx-auto p-4 md:p-8 max-w-7xl">
 
-        <!-- SEZIONE HEADER -->
         <header class="text-center mb-8 md:mb-12">
             <img src="https://placehold.co/200x200/4B5563/FFFFFF?text=Logo+Lega" alt="Logo Lega" class="w-32 h-32 mx-auto mb-4 rounded-full object-cover bg-gray-700">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Mercato Svincolati</h1>
@@ -46,7 +45,6 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            <!-- COLONNA SINISTRA: FORM PER LE OFFERTE -->
             <div class="lg:col-span-1">
                 <div class="bg-white p-6 rounded-2xl card-shadow sticky top-8">
                     <h2 class="text-2xl font-bold mb-4 flex items-center">
@@ -90,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- COLONNA DESTRA: ASTE IN CORSO -->
             <div class="lg:col-span-2">
                 <div class="bg-white p-6 rounded-2xl card-shadow">
                     <h2 class="text-2xl font-bold mb-1">Aste in Corso</h2>
@@ -106,32 +103,32 @@
     </div>
 
     <script>
-        // --- CONFIGURAZIONE ---
         const AUCTION_DURATION_MS = 24 * 60 * 60 * 1000;
 
-        // --- RIFERIMENTI AL DOM ---
         const offerForm = document.getElementById('offerForm');
         const formResult = document.getElementById('formResult');
         const auctionsContainer = document.getElementById('auctionsContainer');
         const loader = document.getElementById('loader');
 
-        // --- LOGICA PRINCIPALE ---
         async function fetchData() {
             try {
-                const url = `/.netlify/functions/get-auctions`;
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`Errore di rete: ${response.statusText}`);
+                const response = await fetch('/.netlify/functions/get-auctions');
+                if (!response.ok) {
+                    throw new Error(`Errore di rete: ${response.statusText}`);
+                }
                 const data = await response.json();
-                return data.records;
+                return data;
             } catch (error) {
                 console.error("Errore nel recupero dati:", error);
                 auctionsContainer.innerHTML = `<p class="text-red-500 text-center">Impossibile caricare le aste. Riprova più tardi.</p>`;
-                return [];
+                return []; // **CORREZIONE**: Restituisce un array vuoto per prevenire il crash
             }
         }
 
         function processAuctions(records) {
             const auctions = {};
+            if (!records) return auctions; // Sicurezza aggiuntiva
+
             records.forEach(record => {
                 const playerName = record.fields.nome?.trim().toLowerCase();
                 if (!playerName) return;
@@ -161,7 +158,7 @@
                 auction.bids.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
                 auction.firstBidTimestamp = auction.bids[0].timestamp;
                 auction.lastBidTimestamp = auction.bids[auction.bids.length - 1].timestamp;
-
+                
                 let highestBid = -1;
                 let leadingTeam = null;
                 auction.bids.forEach(bid => {
@@ -242,12 +239,11 @@
             lucide.createIcons();
         }
         
-        // --- FUNZIONI DI UTILITÀ ---
         function formatTimeLeft(ms) {
             if (ms <= 0) return "00:00:00";
-            const hours = Math.floor((ms / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
-            const minutes = Math.floor((ms / 1000 / 60) % 60).toString().padStart(2, '0');
-            const seconds = Math.floor((ms / 1000) % 60).toString().padStart(2, '0');
+            const hours = Math.floor(ms / 3600000).toString().padStart(2, '0');
+            const minutes = Math.floor((ms % 3600000) / 60000).toString().padStart(2, '0');
+            const seconds = Math.floor((ms % 60000) / 1000).toString().padStart(2, '0');
             return `${hours}:${minutes}:${seconds}`;
         }
         
@@ -266,8 +262,7 @@
                 if (!card) return;
                 
                 const endTime = new Date(card.dataset.endTime);
-                const now = new Date();
-                const timeLeft = endTime - now;
+                const timeLeft = endTime - new Date();
 
                 if (timeLeft <= 0) {
                     timerEl.textContent = "00:00:00";
@@ -280,7 +275,6 @@
             });
         }
         
-        // --- GESTIONE FORM ---
         offerForm.addEventListener('submit', async function(event) {
             event.preventDefault();
             const submitButton = this.querySelector('button[type="submit"]');
@@ -288,23 +282,18 @@
             submitButton.textContent = 'Invio...';
 
             const formData = new FormData(this);
-            const dataToSend = {
-                squadra: formData.get('squadra'),
-                nome: formData.get('nome'),
-                offerta: parseInt(formData.get('offerta'), 10),
-                password: formData.get('password')
-            };
+            const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch(`/.netlify/functions/post-bid`, {
+                const response = await fetch('/.netlify/functions/post-bid', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dataToSend)
+                    body: JSON.stringify(data)
                 });
-
+                
                 if (!response.ok) {
-                    const errorBody = await response.json();
-                    throw new Error(errorBody.message || 'Errore durante l\'invio.');
+                    const errorData = await response.json().catch(() => ({ error: "Errore sconosciuto dal server." }));
+                    throw new Error(errorData.error || `Errore durante l'invio.`);
                 }
                 
                 showFormMessage('Offerta inviata con successo!', 'success');
@@ -312,7 +301,6 @@
                 await main();
 
             } catch (error) {
-                console.error('Errore invio dati:', error);
                 showFormMessage(error.message, 'error');
             } finally {
                 submitButton.disabled = false;
@@ -326,7 +314,6 @@
             setTimeout(() => { formResult.textContent = ''; }, 4000);
         }
 
-        // --- INIZIALIZZAZIONE ---
         async function main() {
             const openDetails = new Set();
             document.querySelectorAll('#auctionsContainer details[open]').forEach(detail => {

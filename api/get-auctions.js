@@ -1,48 +1,41 @@
-// netlify/functions/get-auctions.js
+// NESSUN IMPORT NECESSARIO: 'fetch' è già disponibile nell'ambiente Vercel (Node.js 18+)
 
-// Sintassi moderna per importare 'node-fetch'
-import fetch from 'node-fetch';
+const getEnvVar = (name) => {
+    const value = process.env[name];
+    if (!value) {
+        console.error(`ERRORE CRITICO: La variabile d'ambiente "${name}" non è stata trovata.`);
+    }
+    return value;
+};
 
-const {
-    AIRTABLE_API_KEY,
-    AIRTABLE_BASE_ID,
-    AIRTABLE_TABLE_NAME
-} = process.env;
-
-// Sintassi moderna per esportare la funzione handler
-export const handler = async (event, context) => {
-    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}?sort[0][field]=data&sort[0][direction]=desc`;
-
+// Vercel richiede che la funzione esportata si chiami 'default'
+export default async function handler(req, res) {
     try {
+        const AIRTABLE_API_KEY = getEnvVar('AIRTABLE_API_KEY');
+        const AIRTABLE_BASE_ID = getEnvVar('AIRTABLE_BASE_ID');
+        const AIRTABLE_TABLE_NAME = getEnvVar('AIRTABLE_TABLE_NAME');
+
+        if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID || !AIRTABLE_TABLE_NAME) {
+            return res.status(500).json({ error: "Configurazione del server incompleta." });
+        }
+
+        const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}?sort[0][field]=data&sort[0][direction]=desc`;
+
         const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${AIRTABLE_API_KEY}`
-            }
+            headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` },
         });
 
         if (!response.ok) {
-            return {
-                statusCode: response.status,
-                body: JSON.stringify({ message: response.statusText })
-            };
+            console.error("Errore da Airtable:", await response.text());
+            throw new Error(`Errore di rete: ${response.statusText}`);
         }
 
         const data = await response.json();
+        // Invia i dati con status 200
+        res.status(200).json(data.records);
 
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify(data)
-        };
     } catch (error) {
-        console.error('Errore nella funzione get-auctions:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Errore interno del server.' })
-        };
+        console.error("ERRORE NON GESTITO in 'get-auctions':", error);
+        res.status(500).json({ error: "Impossibile recuperare le aste." });
     }
 };
-
